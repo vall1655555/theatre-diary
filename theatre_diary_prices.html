@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#34232c">
+<title>Theatre Diary — моя театральная афиша</title>
+<style>
+:root{--ink:#eee4d2;--wine:#8e2338;--rose:#c6a58d;--paper:#171315;--muted:#a99a91;--line:#49343a;--card:#211a1d;--gold:#c6a36a;--black:#100d0f}
+*{box-sizing:border-box}
+html{background:var(--paper);scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(ellipse at 50% -15%,#49202b 0%,#21171b 38%,#171315 75%);color:var(--ink);font:15px/1.5 Georgia,'Times New Roman',serif;min-height:100vh}
+.wrap{max-width:1080px;margin:auto;padding:0 22px}
+header{position:relative;overflow:hidden;background:linear-gradient(110deg,rgba(16,13,15,.97),rgba(67,20,34,.96) 48%,rgba(18,14,16,.98));color:#f3e8d7;padding:42px 0 30px;border-bottom:1px solid #8a6549;box-shadow:0 14px 38px #09070899}
+header:before,header:after{content:"✦";position:absolute;color:#c6a36a66;font-size:190px;line-height:1;top:-35px;pointer-events:none}
+header:before{left:-30px}header:after{right:-30px}
+header .wrap{position:relative;z-index:1;text-align:center}
+.eyebrow{font:10px/1.5 Arial,sans-serif;letter-spacing:.32em;text-transform:uppercase;color:var(--gold)}
+h1{font-family:'Times New Roman',Georgia,serif;font-size:clamp(37px,8vw,68px);font-weight:400;letter-spacing:.13em;margin:12px 0 8px;text-shadow:0 3px 18px #0009}
+.sub{color:#d5c1b1;font:10px Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase}
+nav{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:26px 0 0}
+button,select,input{font:12px Arial,sans-serif;letter-spacing:.04em;border:1px solid #5a4145;border-radius:2px;padding:11px 14px;background:#211a1d;color:var(--ink);box-shadow:inset 0 0 0 1px #ffffff08}
+button{cursor:pointer;transition:background .2s,border-color .2s,transform .2s}button:hover{border-color:var(--gold);transform:translateY(-1px)}button.active,.primary{background:var(--wine);color:#fff3e6;border-color:#b45c69}
+main{padding:30px 0 64px}.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:17px}
+.month{display:flex;align-items:center;gap:14px}.month h2{font:italic 28px Georgia,serif;font-weight:400;margin:0;color:#e8d5bd;text-transform:capitalize}.month button{font-size:19px;padding:5px 12px;color:var(--gold)}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:9px;margin:18px 0 10px}.filters select,.filters input{width:100%;min-width:0}.filter-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 20px}.filter-tools button{padding:8px 12px}.filter-count{font:10px Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;background:#100d0f;border:1px solid #5a4145;padding:7px;box-shadow:0 12px 30px #0004}
+.weekday{text-align:center;color:var(--gold);font:10px Arial,sans-serif;letter-spacing:.16em;padding:8px 2px}
+.day{position:relative;min-height:82px;background:linear-gradient(145deg,#2b2024,#1c171a);border:1px solid #3d2c31;border-radius:0;padding:9px;text-align:left;color:#e8dccc}
+.day.out{opacity:.22}.day.selected{outline:1px solid var(--gold);background:linear-gradient(145deg,#512331,#2b1b21)}
+.daynum{font:12px Arial,sans-serif;color:#d7c3ae}.dots{display:flex;gap:4px;flex-wrap:wrap;margin-top:11px}.dot{width:6px;height:6px;border-radius:50%;background:#c6a36a}.dot.other{background:#98717a}
+.section{margin-top:30px}.section h3{font:italic 24px Georgia,serif;font-weight:400;margin:0 0 15px;color:#e8d5bd}
+#watch>h2,#seen>h2{font:italic 30px Georgia,serif;font-weight:400;color:#e8d5bd}
+.events{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.event{position:relative;background:linear-gradient(145deg,#292024,#1e191c);border:1px solid #4b353b;border-left:2px solid #8e2338;border-radius:0;padding:17px 17px 15px;box-shadow:0 7px 20px #0003}
+.event:after{content:"✦";position:absolute;right:13px;top:10px;color:#c6a36a55;font-size:13px}
+.event .meta{font:9px Arial,sans-serif;color:var(--gold);text-transform:uppercase;letter-spacing:.16em}
+.event h4{font:italic 21px/1.2 Georgia,serif;font-weight:400;margin:10px 22px 8px 0;color:#f0e3d1}.event p{font:11px/1.5 Arial,sans-serif;color:#b9a9a1;margin:4px 0}
+.ticket-price{color:#e5c58e!important;font-size:12px!important;margin-top:9px!important}.ticket-price strong{font-size:14px;color:#f5dfb8}.event .actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}.event button{font-size:10px;padding:8px 9px}.event a{align-self:center}
+.priority{color:var(--gold);font-weight:bold}.pill{display:inline-block;background:#542432;color:#e4c49c;padding:4px 8px;border:1px solid #81505a;border-radius:0;font:9px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-top:7px}
+.small{font:11px/1.5 Arial,sans-serif;color:var(--muted)}.panel{background:#211a1d;border:1px solid #49343a;border-top:2px solid #8e2338;border-radius:0;padding:17px;margin-top:16px}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row input{flex:1;min-width:150px}a{color:#d4ad78;text-decoration-color:#805b55;text-underline-offset:3px}a:hover{color:#f1d8ae}
+footer{border-top:1px solid #65474b;padding:22px 0;color:#92827b;font:9px/1.6 Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;text-align:center}
+@media(max-width:600px){.filters{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:0 13px}header{padding:32px 0 24px}.day{min-height:58px;padding:5px}.dots{margin-top:7px}.calendar{gap:3px;padding:4px}.weekday{font-size:9px;padding:6px 0}.toolbar{align-items:flex-start}.month h2{font-size:23px}.filters select{flex:1;min-width:130px}}
+</style></head>
+<body>
+<header><div class="wrap">
+<div class="eyebrow">Моя московская театральная афиша</div><h1>THEATRE DIARY</h1>
+<div class="sub">10 театров · личный репертуар · история посещений</div>
+<nav><button class="active" data-tab="calendar">Календарь</button><button data-tab="watch">Хочу посмотреть</button><button data-tab="seen">Просмотрено</button></nav>
+</div></header>
+<main class="wrap">
+<section id="calendar">
+<div class="toolbar"><div class="month"><button id="prev">‹</button><h2 id="monthTitle"></h2><button id="next">›</button></div><span class="small">Ноябрьская афиша · 2026 · цены от</span></div>
+<div class="filters">
+<select id="theatreFilter"><option value="">Все театры</option></select>
+<select id="priorityFilter"><option value="all">Все театры</option><option value="priority">Четыре приоритетных</option></select>
+<input id="searchFilter" type="search" placeholder="Название спектакля…">
+<select id="statusFilter"><option value="all">Любой статус</option><option value="unseen">Ещё не смотрела</option><option value="watch">В хочу посмотреть</option><option value="seen">Уже просмотрено</option></select>
+<input id="dateFrom" type="date" aria-label="Дата с" title="Дата с">
+<input id="dateTo" type="date" aria-label="Дата по" title="Дата по">
+<select id="priceFilter" aria-label="Максимальная цена"><option value="">Любая цена</option><option value="1500">До 1 500 ₽</option><option value="3000">До 3 000 ₽</option><option value="5000">До 5 000 ₽</option><option value="10000">До 10 000 ₽</option></select>
+</div><div class="filter-tools"><span class="filter-count" id="filterCount">Все показы</span><button id="resetFilters" type="button">Сбросить фильтры ↺</button></div>
+<div class="calendar" id="calendarGrid"></div>
+<div class="section"><h3 id="dayTitle">Спектакли выбранного дня</h3><div id="dayEvents" class="events"></div></div>
+<div class="panel small">Цены указаны как минимальная найденная стоимость «от» по данным афиш и билетных витрин на 4 ноября 2026 года. Это не гарантия наличия билета по минимальной цене: стоимость и остатки меняются. Если цена не указана, она не подтверждена — это не означает бесплатный вход. Перед покупкой проверь цену и наличие на сайте театра.</div>
+</section>
+<section id="watch" hidden><h2>Хочу посмотреть</h2><div class="panel"><div class="row"><input id="watchName" placeholder="Название спектакля"><select id="watchTheatre"></select><button class="primary" id="addWatch">Добавить</button></div></div><div id="watchList" class="section"></div></section>
+<section id="seen" hidden><h2>Уже посмотрела</h2><div id="seenList" class="section"></div></section>
+</main>
+<footer><div class="wrap">THEATRE DIARY · Версия 0.5 · Личные списки сохраняются в браузере на этом устройстве. Афиша пока не обновляется автоматически.</div></footer>
+<script>
+const theatres=["МХТ","Ермоловой","Юго-Запад","Фоменко","Вахтангова","Таганка","СТИ","Театр Наций","Маяковского","Пушкина"];
+const priority=["МХТ","Ермоловой","Юго-Запад","Фоменко"];
+const events=[
+["2026-11-04","Чайка","МХТ","Основная сцена","время уточняется"],
+["2026-11-05","Гамлет","МХТ","Основная сцена","время уточняется"],
+["2026-11-06","Дон Кихот","МХТ","Основная сцена","время уточняется"],
+["2026-11-07","Дядя Ваня","МХТ","Основная сцена","время уточняется"],
+["2026-11-08","8 разгневанных женщин","МХТ","Основная сцена","время уточняется"],
+["2026-11-09","8 разгневанных женщин","МХТ","Основная сцена","время уточняется"],
+["2026-11-11","Жил. Был. Дом.","МХТ","Основная сцена","время уточняется"],
+["2026-11-12","Жил. Был. Дом.","МХТ","Основная сцена","время уточняется"],
+["2026-11-13","Вальпургиева ночь, или Шаги Командора","МХТ","Основная сцена","время уточняется"],
+["2026-11-15","Двадцать дней без войны","МХТ","Основная сцена","время уточняется"],
+["2026-11-16","Авлабар, или Новая Ханума","МХТ","Основная сцена","время уточняется"],
+["2026-11-17","Авлабар, или Новая Ханума","МХТ","Основная сцена","время уточняется"],
+["2026-11-18","XX век. Бал","МХТ","Основная сцена","время уточняется"],
+["2026-11-19","Чайка","МХТ","Основная сцена","время уточняется"],
+["2026-11-20","Кабала святош","МХТ","Основная сцена","время уточняется"],
+["2026-11-21","Кабала святош","МХТ","Основная сцена","время уточняется"],
+["2026-11-25","Гамлет","МХТ","Основная сцена","время уточняется"],
+["2026-11-26","Гамлет","МХТ","Основная сцена","время уточняется"],
+["2026-11-27","Маскарад с закрытыми глазами","МХТ","Основная сцена","время уточняется"],
+["2026-11-28","Бег","МХТ","Основная сцена","время уточняется"],
+["2026-11-29","Конёк-Горбунок","МХТ","Основная сцена","время уточняется"],
+["2026-11-04","Мещане","Ермоловой","Новая сцена","20:00"],
+["2026-11-07","Бродячая собака","Ермоловой","Основная сцена","уточняется"],
+["2026-11-07","Здравствуйте, Астрид!","Ермоловой","Новая сцена","20:00"],
+["2026-11-08","Белые ночи","Ермоловой","Новая сцена","18:00"],
+["2026-11-08","ОМ. Спектакль-интервью","Ермоловой","Основная сцена","уточняется"],
+["2026-11-12","Счастливые дни","Ермоловой","Основная сцена","уточняется"],
+["2026-11-13","Ближе","Ермоловой","Новая сцена","20:00"],
+["2026-11-13","Оркестр мечты. Медь","Ермоловой","Основная сцена","уточняется"],
+["2026-11-14","Сильва","Ермоловой","Основная сцена","уточняется"],
+["2026-11-15","100 лет предлагаемых обстоятельств","Ермоловой","Новая сцена","20:00"],
+["2026-11-15","Сын","Ермоловой","Основная сцена","уточняется"],
+["2026-11-17","Гастроли в Ленинград","Ермоловой","Основная сцена","уточняется"],
+["2026-11-18","Комната Адлера","Ермоловой","Основная сцена","уточняется"],
+["2026-11-18","Счастливые дни","Ермоловой","Основная сцена","уточняется"],
+["2026-11-19","Комната Адлера","Ермоловой","Основная сцена","уточняется"],
+["2026-11-20","Леди Макбет Мценского уезда","Ермоловой","Основная сцена","уточняется"],
+["2026-11-21","Й","Ермоловой","Новая сцена","20:00"],
+["2026-11-24","Поэтический вечер. Бродский","Ермоловой","Основная сцена","уточняется"],
+["2026-11-25","Сильва","Ермоловой","Основная сцена","уточняется"],
+["2026-11-26","Ближе","Ермоловой","Новая сцена","20:00"],
+["2026-11-27","Вроде легче","Ермоловой","Новая сцена","20:00"],
+["2026-11-27","Елизавета Английская","Ермоловой","Основная сцена","уточняется"],
+["2026-11-28","Белые ночи","Ермоловой","Новая сцена","уточняется"],
+["2026-11-28","Счастливые дни","Ермоловой","Основная сцена","уточняется"],
+["2026-11-29","Приглашение на казнь","Ермоловой","Основная сцена","уточняется"],
+["2026-11-03","Сон в летнюю ночь","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-03","Светлые души","Фоменко","Старая сцена, Серый зал","19:00"],
+["2026-11-04","Волки и овцы","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-04","Демон","Фоменко","Старая сцена, Серый зал","19:00"],
+["2026-11-05","Последние свидания","Фоменко","Старая сцена, Серый зал","19:00"],
+["2026-11-06","Семейное счастие","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-06","Мамаша Кураж","Фоменко","Старая сцена, Зелёный зал","19:00"],
+["2026-11-07","Доктор Живаго","Фоменко","Новая сцена, Большой зал","17:00"],
+["2026-11-07","Маяковский. Послушайте","Фоменко","Старая сцена, Серый зал","19:00"],
+["2026-11-10","Война и мир. Начало романа","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-10","Чающие движения воды","Фоменко","Старая сцена, Серый зал","19:00"],
+["2026-11-11","Сирано де Бержерак","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-11","Опасные связи","Фоменко","Старая сцена, Зелёный зал","19:00"],
+["2026-11-12","О любви (5 пудов любви, 22 несчастья, 33 истерики)","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-12","Старик и море","Фоменко","Старая сцена, Серый зал","20:00"],
+["2026-11-13","Аркадия","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-16","Завещание Чарльза Адамса","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-17","Завещание Чарльза Адамса","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-18","Чайка","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-29","Театральный роман (Записки покойника)","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-30","Сон в летнюю ночь","Фоменко","Новая сцена, Большой зал","19:00"],
+["2026-11-04","Урок дочкам","Юго-Запад","Основная сцена","19:00"],
+["2026-11-05","Ревизор","Юго-Запад","Основная сцена","19:00"],
+["2026-11-06","Кабала святош","Юго-Запад","Основная сцена","19:00"],
+["2026-11-10","Игроки","Юго-Запад","Основная сцена","19:00"],
+["2026-11-11","Куклы","Юго-Запад","Основная сцена","19:00"],
+["2026-11-12","Сон в летнюю ночь","Юго-Запад","Основная сцена","19:00"],
+["2026-11-13","Вальпургиева ночь","Юго-Запад","Основная сцена","19:00"]
+ ].map((e,i)=>({id:i,date:e[0],title:e[1],theatre:e[2],stage:e[3],time:e[4]}));
+// Дополнительные даты шести театров: спектакли из ноябрьских афиш 2026.
+const addBatch=(theatre,rows)=>rows.forEach(e=>events.push({id:events.length,date:`2026-11-${String(e[0]).padStart(2,"0")}`,title:e[1],theatre,stage:e[2]||"Сцена театра",time:e[3]||"19:00"}));
+addBatch("Вахтангова",[
+[4,"Театр","Основная сцена","19:00"],[4,"Ионыч","Новая сцена","19:30"],[5,"Фауст","Основная сцена","19:00"],[5,"Повесть о Сонечке","Новая сцена","19:30"],[5,"Матрёнин двор","Студия","19:30"],[6,"Ветер шумит в тополях","Основная сцена","19:00"],[6,"Обратная сторона медали","Новая сцена","19:30"],[6,"Утиная охота","Симоновская сцена","19:30"],[7,"Дядя Ваня","Основная сцена","19:00"],[7,"Король-олень","Симоновская сцена","19:30"],[8,"Питер Пэн","Новая сцена","12:00"],[8,"Дядя Ваня","Основная сцена","19:00"],[8,"Комедия о вдове","Симоновская сцена","19:30"],[9,"Мадемуазель Нитуш","Основная сцена","19:00"],[9,"Дневник Анны Франк","Симоновская сцена","19:30"],[10,"Мадемуазель Нитуш","Основная сцена","19:00"],[10,"Наш класс","Новая сцена","19:30"],[11,"Феллини. 8 1/2","Новая сцена","19:30"],[11,"Любовь у трона","Симоновская сцена","19:30"],[12,"Мёртвые души","Основная сцена","19:00"],[13,"Война и мир","Основная сцена","19:00"],[13,"Люся. Признание в любви","Новая сцена","19:30"],[13,"Король-олень","Симоновская сцена","19:30"],[14,"Питер Пэн","Новая сцена","12:00"],[14,"Мадемуазель Нитуш","Основная сцена","19:00"],[14,"Варшавский набат","Студия","19:30"],[15,"Питер Пэн","Новая сцена","12:00"],[15,"Мадемуазель Нитуш","Основная сцена","19:00"],[15,"Королева-мать","Новая сцена","19:30"],[16,"Война и мир","Основная сцена","19:00"],[17,"Мёртвые души","Основная сцена","19:00"],[17,"Феллини. 8 1/2","Новая сцена","19:30"],[18,"Мёртвые души","Основная сцена","19:00"],[18,"Люся. Признание в любви","Новая сцена","19:30"],[19,"Приношение Гумилёву","Основная сцена","19:00"],[19,"Наш класс","Новая сцена","19:30"],[20,"Фауст","Основная сцена","19:00"],[20,"Повесть о Сонечке","Новая сцена","19:30"],[21,"Фальшивая нота","Основная сцена","19:00"],[21,"Очарованный странник","Симоновская сцена","19:30"],[22,"Ветер шумит в тополях","Основная сцена","19:00"],[22,"Утиная охота","Симоновская сцена","19:30"],[23,"Евгений Онегин","Основная сцена","19:00"],[23,"Наш класс","Новая сцена","19:30"],[24,"В моей груди колокол…","Основная сцена","19:00"],[25,"Блеск и пепел","Основная сцена","19:00"],[26,"Маскарад","Основная сцена","19:00"],[26,"Матрёнин двор","Студия","19:30"],[27,"Солнце Ландау","Основная сцена","19:00"],[27,"Пуф, или Ложь и истина","Новая сцена","19:30"]
+]);
+addBatch("Таганка",[
+[4,"Вий","Основная сцена","19:00"],[4,"Онегин","Новая сцена","19:00"],[4,"Корова","Сцена на Факельном","19:00"],[5,"Рыжий. Я всех любил. Без дураков","Основная сцена","19:00"],[6,"Поцелуй. Конармия","Основная сцена","19:00"],[6,"Чёрная кошка, белый кот","Новая сцена","19:00"],[7,"Беги, Алиса, беги","Основная сцена","19:00"],[7,"Мой бедный Марат","Сцена на Факельном","19:00"],[8,"Сказка о потерянном времени","Сцена на Факельном","15:00"],[8,"Маскарад","Новая сцена","19:00"],[10,"Гамлет","Основная сцена","19:00"],[10,"Каренина","Новая сцена","19:00"],[11,"8 (Восемь)","Малая сцена","20:00"],[11,"Причал","Основная сцена","19:00"],[12,"Три сестры. Долой уныние","Основная сцена","19:00"],[13,"Дом Бернарды Альбы","Малая сцена","19:00"],[14,"Фигаро","Основная сцена","19:00"],[15,"Пиковая дама","Основная сцена","19:00"],[15,"Чужой ребёнок","Малая сцена","19:00"],[17,"Женитьба","Основная сцена","19:00"],[17,"Жёлтая стрела","Новая сцена","19:00"],[18,"Вестсайдская история","Основная сцена","19:00"],[19,"Вишнёвый сад. Комедия","Основная сцена","19:00"],[20,"Герой нашего времени","Основная сцена","19:00"],[20,"Утиная охота","Новая сцена","19:00"],[21,"Кастинг 81/18","Малая сцена","19:00"],[22,"Щелкунчик","Новая сцена","12:00"],[22,"Герой нашего времени","Основная сцена","19:00"],[24,"Lё Тартюф. Комедия","Основная сцена","19:00"],[25,"Деревянные кони","Основная сцена","19:00"],[25,"Опус 48. Островский","Новая сцена","19:00"],[26,"Варшавская мелодия","Малая сцена","19:00"],[26,"Гамлет","Основная сцена","19:00"],[27,"Красная шапка","Малая сцена","20:00"],[29,"104 страницы про любовь","Основная сцена","19:00"],[29,"Чёрная курица","Малая сцена","19:00"]
+]);
+addBatch("СТИ",[
+[1,"Долгая счастливая жизнь","Малая сцена","14:00"],[1,"Три сестры","Основная сцена","19:00"],[3,"Записки покойника","Основная сцена","19:00"],[4,"Долгая счастливая жизнь","Малая сцена","14:00"],[4,"Чеховъ. Вишневый садъ. Нет слов!","Основная сцена","19:00"],[6,"Лабардан-с","Основная сцена","19:00"],[7,"Заповедник","Основная сцена","19:00"],[8,"Чеховъ. Ивановъ. Слова. Слова. Слова","Основная сцена","19:00"],[10,"Игроки","Основная сцена","19:00"],[13,"Чеховъ. Вишневый садъ. Нет слов!","Основная сцена","19:00"],[14,"Река Потудань","Малая сцена","14:00"],[14,"Дыра","Основная сцена","19:00"],[15,"Один день в Макондо","Основная сцена","13:00"],[17,"Мандат","Основная сцена","19:00"],[18,"Мастер и Маргарита","Основная сцена","19:00"],[19,"Дыра","Основная сцена","19:00"],[20,"Москва — Петушки","Основная сцена","19:00"],[21,"Шествие","Фойе театра","14:00"],[21,"Лабардан-с","Основная сцена","19:00"],[22,"Самоубийца","Основная сцена","19:00"],[24,"Все наши дни рождения","Основная сцена","19:00"],[25,"Заповедник","Основная сцена","19:00"],[26,"В родном городе","Основная сцена","19:00"],[27,"Мастер и Маргарита","Основная сцена","19:00"],[28,"Река Потудань","Малая сцена","14:00"],[28,"Дыра","Основная сцена","19:00"],[29,"Чеховъ. Ивановъ. Слова. Слова. Слова","Основная сцена","19:00"]
+]);
+addBatch("Театр Наций",[
+[4,"Моими глазами","Малая сцена","20:00"],[5,"Васса","Основная сцена","19:00"],[6,"Васса","Основная сцена","19:00"],[7,"День закрытых дверей","Новое пространство","19:00"],[9,"История одной фотографии","Новое пространство","19:00"],[10,"Взрослая дочь молодого человека","Малая сцена","20:00"],[11,"Взрослая дочь молодого человека","Малая сцена","20:00"],[12,"Последнее лето","Основная сцена","19:00"],[12,"Призраки","Малая сцена","20:00"],[13,"Молодость","Основная сцена","19:00"],[13,"Последнее лето","Новое пространство","19:00"],[14,"Молодость","Основная сцена","19:00"],[14,"Жюли","Малая сцена","20:00"],[15,"Жюли","Малая сцена","20:00"],[16,"Тихий Дон","Основная сцена","18:00"],[16,"Макбет","Малая сцена","20:00"],[17,"Тихий Дон","Основная сцена","18:00"],[17,"Канарейка","Малая сцена","20:00"],[18,"Тихий Дон","Основная сцена","18:00"],[18,"Канарейка","Малая сцена","20:00"],[20,"Обыкновенная смерть","Малая сцена","20:00"],[21,"Обыкновенная смерть","Малая сцена","20:00"],[23,"Мастер и Маргарита","Основная сцена","18:00"],[24,"Мастер и Маргарита","Основная сцена","18:00"],[24,"Каренина. Процесс","Малая сцена","20:00"],[25,"Мастер и Маргарита","Основная сцена","18:00"],[26,"Мастер и Маргарита","Основная сцена","18:00"],[28,"Толстая тетрадь","Основная сцена","19:00"]
+]);
+addBatch("Маяковского",[
+[4,"Мама-кот","Основная сцена","12:00"],[4,"Бешеные деньги","Основная сцена","18:00"],[5,"Пигмалион","Основная сцена","19:00"],[6,"Женитьба","Основная сцена","19:00"],[6,"Парадокс скворца","Малая сцена","19:00"],[7,"Евгений Онегин","Основная сцена","18:00"],[8,"Скучная история","Основная сцена","18:00"],[9,"Палата № 6","Филиал на Сретенке","19:00"],[11,"Как важно быть серьёзным","Основная сцена","19:00"],[12,"Бердичев","Основная сцена","19:00"],[14,"Каренина. Том второй","Основная сцена","17:00"],[14,"Не все коту масленица","Филиал на Сретенке","18:00"],[15,"Каренина. Том второй","Основная сцена","17:00"],[16,"2007","Филиал на Сретенке","19:00"],[17,"Сны моего отца 2.0","Основная сцена","19:00"],[18,"Обломов","Основная сцена","19:00"],[18,"Снимается кино","Филиал на Сретенке","19:00"],[19,"Московский хор","Основная сцена","19:00"],[20,"Старший сын","Основная сцена","19:00"],[21,"Как важно быть серьёзным","Основная сцена","18:00"],[22,"Таланты и поклонники","Основная сцена","18:00"],[22,"Ося. Иосиф. Joseph","Малая сцена","18:00"],[23,"Дядя Ваня","Малая сцена","19:00"],[25,"Лес","Основная сцена","19:00"],[25,"Блажь","Малая сцена","19:00"],[26,"Все мои сыновья","Филиал на Сретенке","19:00"],[26,"Евгений Онегин","Основная сцена","19:00"],[27,"Фауст","Малая сцена","19:00"],[28,"Русский роман","Основная сцена","18:00"],[29,"Таланты и поклонники","Основная сцена","18:00"],[30,"Кант","Филиал на Сретенке","19:00"]
+]);
+addBatch("Пушкина",[
+[3,"Завтра была война","Основная сцена","19:00"],[4,"Влюблённый Шекспир","Основная сцена","19:00"],[5,"Слуга двух господ","Основная сцена","19:00"],[6,"Ложные признания","Основная сцена","19:00"],[7,"Три Ивана","Основная сцена","12:00"],[7,"Мышеловка","Основная сцена","19:00"],[8,"Лицей","Основная сцена","15:00"],[9,"Чекап","Основная сцена","19:00"],[10,"Женитьба Фигаро","Основная сцена","19:00"],[11,"Женитьба Фигаро","Основная сцена","19:00"],[12,"Капитанская дочка","Основная сцена","19:00"],[13,"Красавец мужчина","Основная сцена","19:00"],[14,"Зойкина квартира","Основная сцена","19:00"],[15,"Инспектор пришёл","Основная сцена","19:00"],[17,"Опера нищих","Основная сцена","19:00"],[20,"Опера нищих","Основная сцена","19:00"],[21,"Идиот","Основная сцена","19:00"],[22,"Эта прекрасная жизнь","Основная сцена","19:00"],[23,"Космос","Основная сцена","19:00"],[24,"Барабаны в ночи","Основная сцена","19:00"],[25,"Плохие хорошие","Основная сцена","19:00"],[26,"Плохие хорошие","Основная сцена","19:00"],[27,"Заповедник","Основная сцена","19:00"],[28,"Тартюф","Основная сцена","19:00"],[29,"Слуга двух господ","Основная сцена","19:00"]
+]);
+// Минимальные цены «от», найденные в афишах/билетных витринах 04.11.2026. null = цена не подтверждена.
+const priceMap={
+"МХТ":{"Чайка":3800,"Гамлет":2000,"Дон Кихот":1700,"Дядя Ваня":1500,"8 разгневанных женщин":3800,"Жил. Был. Дом.":4000,"Вальпургиева ночь, или Шаги Командора":1500,"Вальпургиева ночь":1500,"Самоубийца":1600,"Шинель":1800,"Старший сын":3800,"Серёжа":3100,"Омон Ра":null,"Кабала святош":null,"Конёк-Горбунок":null,"XX век. Бал":null},
+"Ермоловой":{"Мещане":3900,"Бродячая собака":3400,"Здравствуйте, Астрид!":3400,"Здравствуйте Астрид!":3400,"Белые ночи":4400,"ОМ. Спектакль-интервью":9900,"Счастливые дни":5900,"Ближе":5900,"Оркестр мечты. Медь":5900,"Сильва":13400,"Сын":3400,"100 лет предлагаемых обстоятельств":4400,"Гастроли в Ленинград":3400,"Комната Адлера":14400,"Леди Макбет Мценского уезда":11400,"Й":4400,"Й (Вий)":4400,"Елизавета Английская":3400,"Вроде легче":3900,"Приглашение на казнь":3400,"Прыжок в свободу":3000},
+"Юго-Запад":{"Урок дочкам":3000,"Ревизор":1500,"Кабала святош":1800,"Собаки":3500,"Игра в кубики":1500,"Я":900,"Муха-Цокотуха":800},
+"Фоменко":{"Сон в летнюю ночь":5900,"Волки и овцы":14900},
+"Вахтангова":{"Фауст":2700,"Дядя Ваня":3200,"Питер Пэн":3100,"Мадемуазель Нитуш":3200,"Дневник Анны Франк":13800,"Мёртвые души":3500,"Фальшивая нота":5200,"Евгений Онегин":3200,"Блеск и пепел":2800,"Маскарад":3200,"Солнце Ландау":2000,"Бег":2600},
+"Таганка":{"Вий":1500,"Онегин":1000,"Рыжий. Я всех любил. Без дураков":1500,"Катарсис, или Крах всего святого":2500,"Поцелуй. Конармия":1000,"Чёрная кошка, белый кот":1000,"Беги, Алиса, беги":1000,"Мой бедный Марат":1500,"Сказка о потерянном времени":2000,"Маскарад":1000,"Гамлет":1500,"Каренина":1000,"8 (Восемь)":1000,"Причал":null,"Три сестры. Долой уныние":null,"Дом Бернарды Альбы":null,"Фигаро":null,"Пиковая дама":null,"Женитьба":null,"Жёлтая стрела":null,"Вестсайдская история":null,"Вишнёвый сад. Комедия":null,"Герой нашего времени":null,"Утиная охота":null,"Щелкунчик":null,"Lё Тартюф. Комедия":null,"Деревянные кони":null,"Опус 48. Островский":null,"Варшавская мелодия":null,"Красная шапка":null,"104 страницы про любовь":null,"Чёрная курица":null}
+};
+events.forEach(e=>{const v=priceMap[e.theatre]?.[e.title];e.price=Number.isFinite(v)?v:null});
+const sourceLinks={"МХТ":"https://www.mxat.ru/repertuar/current/","Ермоловой":"https://www.ermolova.ru/repertoire/","Юго-Запад":"https://teatr-uz.ru/afisha/today","Фоменко":"https://fomenko.theatre.ru/timetable/","Вахтангова":"https://vakhtangov.ru/afisha/moscow/?enddate=20261201&startdate=20261101","Таганка":"https://www.tagankateatr.ru/","СТИ":"https://sti.ru/tekushhiy-mesyac/","Театр Наций":"https://teatr-nations.ru/events","Маяковского":"https://www.mayakovsky.ru/performance/","Пушкина":"https://teatrpushkin.ru/afisha/"};
+let watch=JSON.parse(localStorage.getItem("td_watch")||"[]"),seen=JSON.parse(localStorage.getItem("td_seen")||"[]");
+let current=new Date(2026,10,1),selected="2026-11-04",tab="calendar";
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem("td_watch",JSON.stringify(watch));localStorage.setItem("td_seen",JSON.stringify(seen))}
+function options(){["theatreFilter","watchTheatre"].forEach(id=>{let el=$(id);el.innerHTML=(id==="theatreFilter"?'<option value="">Все театры</option>':"")+theatres.map(t=>`<option>${t}</option>`).join("")})}
+function dateKey(y,m,d){return `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`}
+function passesFilters(e){
+ const theatre=$("theatreFilter").value,prio=$("priorityFilter").value,q=$("searchFilter").value.trim().toLocaleLowerCase("ru"),status=$("statusFilter").value,from=$("dateFrom").value,to=$("dateTo").value,maxPrice=$("priceFilter").value;
+ const inWatch=watch.some(w=>w.title===e.title&&w.theatre===e.theatre),done=seen.some(w=>w.title===e.title&&w.theatre===e.theatre);
+ return (!theatre||e.theatre===theatre)&&(prio!=="priority"||priority.includes(e.theatre))&&(!q||e.title.toLocaleLowerCase("ru").includes(q))&&(!from||e.date>=from)&&(!to||e.date<=to)&&(!maxPrice||(e.price!==null&&e.price<=Number(maxPrice)))&&(status==="all"||(status==="watch"&&inWatch)||(status==="seen"&&done)||(status==="unseen"&&!done));
+}
+function updateFilterCount(){const n=events.filter(passesFilters).length;$("filterCount").textContent=`Подходящих показов: ${n}`}
+function renderCalendar(){
+let y=current.getFullYear(),m=current.getMonth();$("monthTitle").textContent=new Intl.DateTimeFormat("ru-RU",{month:"long",year:"numeric"}).format(current);
+let first=(new Date(y,m,1).getDay()+6)%7,last=new Date(y,m+1,0).getDate(),html=["ПН","ВТ","СР","ЧТ","ПТ","СБ","ВС"].map(x=>`<div class="weekday">${x}</div>`).join("");
+for(let i=0;i<42;i++){let d=i-first+1,valid=d>0&&d<=last,key=valid?dateKey(y,m,d):"",list=events.filter(e=>e.date===key&&passesFilters(e));html+=`<button class="day ${valid?"":"out"} ${key===selected?"selected":""}" data-date="${key}"><span class="daynum">${valid?d:""}</span><div class="dots">${list.slice(0,5).map(e=>`<i class="dot ${priority.includes(e.theatre)?"":"other"}"></i>`).join("")}</div></button>`}
+$("calendarGrid").innerHTML=html;$("calendarGrid").querySelectorAll("[data-date]").forEach(b=>b.onclick=()=>{if(b.dataset.date){selected=b.dataset.date;renderCalendar();renderDay()}});
+updateFilterCount();renderDay()}
+function renderDay(){let [y,m,d]=selected.split("-").map(Number);$("dayTitle").textContent=`${d} ${new Intl.DateTimeFormat("ru-RU",{month:"long"}).format(new Date(y,m-1,1))}`;
+let list=events.filter(e=>e.date===selected&&passesFilters(e));
+$("dayEvents").innerHTML=list.length?list.map(eventCard).join(""):'<div class="panel small">По выбранным фильтрам показов на эту дату нет. Попробуй изменить параметры или сбросить фильтры.</div>';bindCards();updateFilterCount()}
+function eventCard(e){let inWatch=watch.some(w=>w.title===e.title&&w.theatre===e.theatre),done=seen.some(w=>w.title===e.title&&w.theatre===e.theatre);
+return `<article class="event"><div class="meta">${e.theatre} · ${e.date.slice(8,10)} ноября · ${e.time}</div><h4>${e.title}</h4><p>${e.stage}</p><p class="ticket-price">${e.price!==null?`Билеты от <strong>${e.price.toLocaleString("ru-RU")} ₽</strong>`:"Цена пока не подтверждена"}</p>${priority.includes(e.theatre)?'<span class="pill">Приоритетный театр</span>':''}<div class="actions"><button data-watch="${e.id}">${inWatch?"В watchlist ✓":"Хочу посмотреть +"}</button><button data-seen="${e.id}">${done?"Просмотрено ✓":"Отметить просмотренным"}</button><a class="small" target="_blank" href="${sourceLinks[e.theatre]||"#"}">Афиша театра ↗</a></div></article>`}
+function bindCards(){$("[dummy]");document.querySelectorAll("[data-watch]").forEach(b=>b.onclick=()=>{let e=events[+b.dataset.watch];if(!watch.some(w=>w.title===e.title&&w.theatre===e.theatre))watch.push({title:e.title,theatre:e.theatre});save();renderCalendar()});document.querySelectorAll("[data-seen]").forEach(b=>b.onclick=()=>{let e=events[+b.dataset.seen];if(!seen.some(w=>w.title===e.title&&w.theatre===e.theatre))seen.push({title:e.title,theatre:e.theatre});save();renderCalendar()})}
+function renderWatch(){$("watchList").innerHTML=watch.length?watch.map((w,i)=>`<div class="event"><h4>${w.title}</h4><p>${w.theatre}</p><button data-remove="${i}">Убрать</button><button data-mark="${i}">Посмотрела</button></div>`).join(""):'<p class="small">Пока пусто — добавь спектакли из афиши или вручную.</p>';$("watchList").querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{watch.splice(+b.dataset.remove,1);save();renderWatch()});$("watchList").querySelectorAll("[data-mark]").forEach(b=>b.onclick=()=>{let w=watch.splice(+b.dataset.mark,1)[0];seen.push(w);save();renderWatch()})}
+function renderSeen(){$("seenList").innerHTML=seen.length?seen.map(w=>`<div class="event"><h4>${w.title}</h4><p>${w.theatre}</p></div>`).join(""):'<p class="small">Пока нет отмеченных спектаклей.</p>'}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{tab=b.dataset.tab;document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x===b));["calendar","watch","seen"].forEach(id=>$(id).hidden=id!==tab);if(tab==="watch")renderWatch();if(tab==="seen")renderSeen()});
+$("prev").onclick=()=>{current.setMonth(current.getMonth()-1);selected=dateKey(current.getFullYear(),current.getMonth(),1);renderCalendar()};
+$("next").onclick=()=>{current.setMonth(current.getMonth()+1);selected=dateKey(current.getFullYear(),current.getMonth(),1);renderCalendar()};
+["theatreFilter","priorityFilter","searchFilter","statusFilter","dateFrom","dateTo","priceFilter"].forEach(id=>{["input","change"].forEach(evt=>$(id).addEventListener(evt,()=>renderCalendar()))});
+$("resetFilters").onclick=()=>{["theatreFilter","searchFilter","dateFrom","dateTo","priceFilter"].forEach(id=>$(id).value="");$("priorityFilter").value="all";$("statusFilter").value="all";renderCalendar()};
+$("addWatch").onclick=()=>{let title=$("watchName").value.trim(),theatre=$("watchTheatre").value;if(title){watch.push({title,theatre});$("watchName").value="";save();renderWatch()}};
+options();renderCalendar();
+</script></body></html>
